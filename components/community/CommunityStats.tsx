@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { 
@@ -20,62 +20,28 @@ interface CommunityStatsProps {
   showDetailed?: boolean
 }
 
+// 模擬統計數據 - 移到元件外部避免重複建立
+const mockStats: CommunityStatsType = {
+  total_wishes: 1247,
+  fulfilled_wishes: 342,
+  total_prayers: 5689,
+  active_users: 823,
+  popular_deities: [
+    { deity_id: 'yue_lao', deity_name: '月老司機', deity_emoji: '💕', wish_count: 356 },
+    { deity_id: 'wen_chang', deity_name: '文昌老師', deity_emoji: '📚', wish_count: 298 },
+    { deity_id: 'guan_yin', deity_name: '觀音媽咪', deity_emoji: '🤲', wish_count: 234 },
+    { deity_id: 'cai_shen', deity_name: '財神老闆', deity_emoji: '💰', wish_count: 189 },
+    { deity_id: 'ma_zu', deity_name: '媽祖姐姐', deity_emoji: '🌊', wish_count: 112 },
+    { deity_id: 'guan_gong', deity_name: '關老大', deity_emoji: '⚔️', wish_count: 58 }
+  ]
+}
+
 export default function CommunityStats({ 
   stats,
   showDetailed = true 
 }: CommunityStatsProps) {
-  const [currentStats, setCurrentStats] = useState<CommunityStatsType | null>(null)
-  const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    // 模擬統計數據
-    const mockStats: CommunityStatsType = {
-    total_wishes: 1247,
-    fulfilled_wishes: 342,
-    total_prayers: 5689,
-    active_users: 823,
-    popular_deities: [
-      { deity_id: 'yue_lao', deity_name: '月老司機', deity_emoji: '💕', wish_count: 356 },
-      { deity_id: 'wen_chang', deity_name: '文昌老師', deity_emoji: '📚', wish_count: 298 },
-      { deity_id: 'guan_yin', deity_name: '觀音媽咪', deity_emoji: '🤲', wish_count: 234 },
-      { deity_id: 'cai_shen', deity_name: '財神老闆', deity_emoji: '💰', wish_count: 189 },
-      { deity_id: 'ma_zu', deity_name: '媽祖姐姐', deity_emoji: '🌊', wish_count: 112 },
-      { deity_id: 'guan_gong', deity_name: '關老大', deity_emoji: '⚔️', wish_count: 58 }
-    ]
-    }
-    
-    if (stats) {
-      setCurrentStats(stats)
-    } else {
-      // 模擬 API 調用
-      setLoading(true)
-      setTimeout(() => {
-        setCurrentStats(mockStats)
-        setLoading(false)
-      }, 1000)
-    }
-  }, [stats])
-
-
-  if (loading || !currentStats) {
-    return (
-      <Card>
-        <CardContent className="p-6">
-          <div className="animate-pulse space-y-4">
-            <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[1, 2, 3, 4].map(i => (
-                <div key={i} className="space-y-2">
-                  <div className="h-8 bg-gray-200 rounded"></div>
-                  <div className="h-4 bg-gray-200 rounded"></div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
+  // 直接使用 stats 或 mockStats 作為初始值，避免 hydration 不匹配
+  const currentStats = stats || mockStats
 
   const fulfillmentRate = Math.round((currentStats.fulfilled_wishes / currentStats.total_wishes) * 100)
   const avgPrayersPerWish = Math.round(currentStats.total_prayers / currentStats.total_wishes)

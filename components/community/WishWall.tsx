@@ -63,7 +63,7 @@ export default function WishWall({ initialWishes = [], showCreateForm = true }: 
     if (initialWishes.length === 0) {
       loadMockWishes()
     }
-  }, [initialWishes])
+  }, [initialWishes.length])
 
   const loadMockWishes = () => {
     const mockWishes: Wish[] = [
