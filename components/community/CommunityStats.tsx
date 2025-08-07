@@ -42,6 +42,7 @@ export default function CommunityStats({
       { deity_id: 'ma_zu', deity_name: '媽祖姐姐', deity_emoji: '🌊', wish_count: 112 },
       { deity_id: 'guan_gong', deity_name: '關老大', deity_emoji: '⚔️', wish_count: 58 }
     ]
+    }
     
     if (stats) {
       setCurrentStats(stats)
