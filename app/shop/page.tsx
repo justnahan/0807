@@ -3,46 +3,38 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { generateRefLink } from '@/lib/supabase'
+import { supabase, generateRefLink, type Product } from '@/lib/supabase'
 import { Metadata } from 'next'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: '祈福商城 - 線上寺廟',
   description: '各式神明加持的祈福商品，招財、開運、平安、姻緣應有盡有。正品保證，神明親自加持。',
 }
 
-interface Product {
-  id: string
-  merchant_id: string
-  name: string
-  price_in_cents: number
-  image_url: string | null
-  product_url?: string | null
-  merchant?: {
-    id: string
-    name: string
-    base_product_url: string
-  }
-}
-
 async function getSelectedProducts(): Promise<Product[]> {
   try {
-    // 從 selected-products.json 讀取商品 ID
+    // 從 selected-products.json 讀取商品 ID 列表
     const selectedProductsFile = await import('@/selected-products.json')
     const productIds = selectedProductsFile.productIds || []
     
-    // 從 API 獲取商品資料
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/products?ids=${productIds.join(',')}`, {
-      cache: 'no-store'
-    })
-    
-    if (!response.ok) {
-      console.error('Failed to fetch products:', response.status)
+    if (!supabase) {
+      console.warn('Supabase client is not initialized. Returning empty array.')
       return []
     }
     
-    const products = await response.json()
-    return Array.isArray(products) ? products : []
+    // 直接從 Supabase 獲取商品資料
+    const { data: products, error } = await supabase
+      .from('products')
+      .select('*, merchant:merchants(*)')
+      .in('id', productIds)
+    
+    if (error) {
+      console.error('Failed to fetch products from Supabase:', error)
+      return []
+    }
+    
+    return products || []
   } catch (error) {
     console.error('Error fetching products:', error)
     return []
@@ -200,30 +192,41 @@ export default async function ShopPage() {
             
             return (
               <Card key={product.id} className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
-                <CardHeader className="pb-2">
-                  <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg mb-2 flex items-center justify-center overflow-hidden">
-                    {product.image_url ? (
-                      <img 
-                        src={product.image_url} 
-                        alt={product.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    ) : (
-                      <span className="text-4xl">📦</span>
-                    )}
-                  </div>
-                  <CardTitle className="text-sm line-clamp-2">{product.name}</CardTitle>
-                </CardHeader>
+                <Link href={`/shop/${product.id}`}>
+                  <CardHeader className="pb-2">
+                    <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg mb-2 flex items-center justify-center overflow-hidden">
+                      {product.image_url ? (
+                        <img 
+                          src={product.image_url} 
+                          alt={product.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : (
+                        <span className="text-4xl">📦</span>
+                      )}
+                    </div>
+                    <CardTitle className="text-sm line-clamp-2 hover:text-red-600 transition-colors">
+                      {product.name}
+                    </CardTitle>
+                  </CardHeader>
+                </Link>
                 <CardContent className="pt-0">
-                  <p className="text-sm text-gray-600 mb-2">正品保證</p>
+                  <p className="text-sm text-gray-600 mb-2">正品保證 • 神明加持</p>
                   <p className="font-bold text-lg text-amber-600 mb-3">
                     NT$ {Math.floor(product.price_in_cents / 100)}
                   </p>
-                  <Button asChild size="sm" className="w-full">
-                    <a href={buyLink} target="_blank" rel="noopener noreferrer">
-                      立即購買
-                    </a>
-                  </Button>
+                  <div className="space-y-2">
+                    <Button asChild size="sm" className="w-full bg-red-600 hover:bg-red-700">
+                      <a href={buyLink} target="_blank" rel="noopener noreferrer">
+                        🛒 立即購買
+                      </a>
+                    </Button>
+                    <Button asChild size="sm" variant="outline" className="w-full">
+                      <Link href={`/shop/${product.id}`}>
+                        📖 查看詳情
+                      </Link>
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             )
