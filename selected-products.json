@@ -12,6 +12,11 @@
     "PROD_009 - 瑜珈按摩滾輪"
   ],
   "productIds": [
+    "PROD_001",
+    "PROD_002",
+    "PROD_003",
+    "PROD_004",
+    "PROD_005",
     "PROD_UF001",
     "PROD_UF002"
   ]
