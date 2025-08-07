@@ -10,12 +10,66 @@ export const metadata: Metadata = {
 }
 
 const deities = [
-  { id: 'yuelao', name: '月老司機', specialty: '感情問題', emoji: '💕', status: '今日紅線微動' },
-  { id: 'wenchang', name: '文昌老師', specialty: '學業事業', emoji: '📚', status: '學業運勢良好' },
-  { id: 'guanyin', name: '觀音媽咪', specialty: '健康平安', emoji: '🌸', status: '身心平安順遂' },
-  { id: 'guandi', name: '關老大', specialty: '正義決策', emoji: '⚔️', status: '正義之心常在' },
-  { id: 'mazu', name: '媽祖姐姐', specialty: '出行平安', emoji: '⛵', status: '出行平安無憂' },
-  { id: 'caishen', name: '財神老闆', specialty: '財運事業', emoji: '💰', status: '財運亨通在望' },
+  { 
+    id: 'yuelao', 
+    name: '月老司機', 
+    specialty: '感情問題', 
+    emoji: '💕', 
+    status: '紅線活躍中',
+    gradient: 'from-pink-100 via-pink-200 to-pink-400',
+    borderColor: 'hover:border-pink-400 hover:shadow-pink-200/50',
+    statusColor: 'bg-pink-100 text-pink-700'
+  },
+  { 
+    id: 'wenchang', 
+    name: '文昌老師', 
+    specialty: '學業事業', 
+    emoji: '📚', 
+    status: '智慧加持中',
+    gradient: 'from-blue-100 via-blue-200 to-blue-400',
+    borderColor: 'hover:border-blue-400 hover:shadow-blue-200/50',
+    statusColor: 'bg-blue-100 text-blue-700'
+  },
+  { 
+    id: 'guanyin', 
+    name: '觀音媽咪', 
+    specialty: '健康平安', 
+    emoji: '🌸', 
+    status: '慈悲守護中',
+    gradient: 'from-pink-50 via-pink-100 to-pink-200',
+    borderColor: 'hover:border-pink-300 hover:shadow-pink-100/50',
+    statusColor: 'bg-pink-50 text-pink-600'
+  },
+  { 
+    id: 'guandi', 
+    name: '關老大', 
+    specialty: '正義決策', 
+    emoji: '⚔️', 
+    status: '正氣凜然中',
+    gradient: 'from-red-100 via-red-300 to-red-500',
+    borderColor: 'hover:border-red-400 hover:shadow-red-200/50',
+    statusColor: 'bg-red-100 text-red-700'
+  },
+  { 
+    id: 'mazu', 
+    name: '媽祖姐姐', 
+    specialty: '出行平安', 
+    emoji: '⛵', 
+    status: '海風護航中',
+    gradient: 'from-cyan-100 via-teal-200 to-teal-400',
+    borderColor: 'hover:border-teal-400 hover:shadow-teal-200/50',
+    statusColor: 'bg-teal-100 text-teal-700'
+  },
+  { 
+    id: 'caishen', 
+    name: '財神老闆', 
+    specialty: '財運事業', 
+    emoji: '💰', 
+    status: '金光閃閃中',
+    gradient: 'from-yellow-100 via-yellow-300 to-orange-400',
+    borderColor: 'hover:border-yellow-400 hover:shadow-yellow-200/50',
+    statusColor: 'bg-yellow-100 text-yellow-700'
+  },
 ]
 
 export default function Home() {
@@ -78,20 +132,23 @@ export default function Home() {
           {deities.map((deity) => (
             <Card 
               key={deity.id}
-              className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer border-2 hover:border-yellow-400"
+              className={`bg-gradient-to-br ${deity.gradient} hover:shadow-xl transition-all duration-400 hover:scale-105 hover:-translate-y-2 cursor-pointer border-2 ${deity.borderColor} group relative overflow-hidden`}
             >
-              <CardHeader className="text-center pb-2">
-                <div className="text-4xl mb-2">{deity.emoji}</div>
-                <CardTitle className="text-lg">{deity.name}</CardTitle>
-                <CardDescription>{deity.specialty}</CardDescription>
+              {/* 光效 */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400"></div>
+              
+              <CardHeader className="text-center pb-2 relative z-10">
+                <div className="text-4xl mb-2 group-hover:scale-110 group-hover:animate-pulse transition-all duration-400">{deity.emoji}</div>
+                <CardTitle className="text-lg font-bold group-hover:text-gray-900">{deity.name}</CardTitle>
+                <CardDescription className="group-hover:text-gray-700 font-medium">{deity.specialty}</CardDescription>
               </CardHeader>
-              <CardContent className="text-center pt-0">
-                <p className="text-sm text-green-600 font-medium">{deity.status}</p>
+              <CardContent className="text-center pt-0 relative z-10">
+                <p className={`text-sm font-bold px-3 py-1 rounded-full ${deity.statusColor} border shadow-sm mb-3`}>{deity.status}</p>
                 <Button 
                   asChild 
                   size="sm" 
-                  className="mt-3 w-full"
-                  variant="outline"
+                  className="w-full bg-white/80 hover:bg-white text-gray-800 font-bold shadow-md hover:shadow-lg transition-all duration-300 group-hover:scale-105"
+                  variant="secondary"
                 >
                   <Link href={`/deities/${deity.id}`}>
                     立即諮詢
