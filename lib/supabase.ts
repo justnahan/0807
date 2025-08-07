@@ -36,6 +36,46 @@ export interface VibeCoder {
   ref_code: string
 }
 
+// 許願牆相關資料結構
+export interface Wish {
+  id: string
+  user_id?: string | null
+  deity_id: string
+  deity_name: string
+  deity_emoji: string
+  wish_content: string
+  is_anonymous: boolean
+  status: 'active' | 'fulfilled' | 'archived'
+  created_at: string
+  updated_at: string
+  likes_count: number
+  comments_count: number
+  is_fulfilled: boolean
+  fulfillment_story?: string | null
+}
+
+export interface WishInteraction {
+  id: string
+  wish_id: string
+  user_id?: string | null
+  interaction_type: 'like' | 'pray' | 'comment'
+  comment_content?: string | null
+  created_at: string
+}
+
+export interface CommunityStats {
+  total_wishes: number
+  fulfilled_wishes: number
+  total_prayers: number
+  active_users: number
+  popular_deities: Array<{
+    deity_id: string
+    deity_name: string
+    deity_emoji: string
+    wish_count: number
+  }>
+}
+
 // 輔助函數：生成 REF Link
 export function generateRefLink(product: Product, refCode: string): string {
   // 優先使用 product_url
